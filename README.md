@@ -9,6 +9,13 @@ git clone --recurse-submodules https://github.com/fei015/IDSNN.git
 ## Train
 ```bash
 # Change the path to your datasets in conf/global_settings.py
+
+According to the ablation of the initialization module and the distillation module, there are four training methods:
+baseline - trained with no initialization or distillation
+only initialization - trained with parameter initialization but no distillation
+only distillation - trained with knowledge distillation but no initialization
+complete IDSNN method - trained with both initialization and distillation
+You can expand your code or validate the effectiveness of each module as needed by selecting different modules.
 # baseline training
 python -u -m torch.distributed.launch --master_port=1234 --nproc_per_node=4 train_baseline.py -net Sresnet18 -dataset cifar100 -b 64 -lr 0.05
 
