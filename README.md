@@ -29,7 +29,7 @@ python -u -m torch.distributed.launch --master_port=1234 --nproc_per_node=4 trai
 # IDSNN training
 python -u -m torch.distributed.launch --master_port=1234 --nproc_per_node=4 train_kd_ds.py -net Sresnet18 -teacher_net resnet34 -dataset cifar100 -b 64 -lr 0.05
 
-The batchsize (-b) can be adjusted linearly to your GPU memory, and the learning rate should be adjusted accordingly.
+# The batchsize (-b) can be adjusted linearly to your GPU memory, and the learning rate should be adjusted accordingly.
 ```
 ## Contact 
 
