@@ -6,7 +6,7 @@ Clone the repository recursively:
 ```bash
 git clone --recurse-submodules https://github.com/fei015/IDSNN.git
 ```
-Obtain the ANN model weights here for initialization and distillation.
+Obtain the ANN model weights [here](https://share.weiyun.com/HAiqsHHv) for initialization and distillation.
 ## Train
 Firstly, change the path to your datasets in conf/global_settings.py
 
