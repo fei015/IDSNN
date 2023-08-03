@@ -126,11 +126,11 @@ if __name__ == '__main__':
     
     if args.dataset == 'cifar10':
         source_checkpoint = 'checkpoint_ds_kd/cifar10_pycls34.pyth'
-        # 转换模型权重
+        # Transform model weight to complete the initialization
         downsample_load_resnet(source_checkpoint, net)
     elif args.dataset == 'cifar100':
         source_checkpoint = 'checkpoint_ds_kd/cifar100_pycls34.pyth'
-        # 转换模型权重
+        # Transform model weight to complete the initialization
         downsample_load_resnet(source_checkpoint, net)
     
     net = nn.SyncBatchNorm.convert_sync_batchnorm(net)
@@ -149,7 +149,6 @@ if __name__ == '__main__':
     loss_function = nn.CrossEntropyLoss(reduction='mean')
     # optimizer = optim.SGD([{'params': net.parameters(), 'initial_lr': b_lr}], momentum=0.9, lr=b_lr, weight_decay=0.0001) # cifar100
     optimizer = optim.SGD([{'params': net.parameters(), 'initial_lr': b_lr}], momentum=0.9, lr=b_lr, weight_decay=0.0001) # cifar10
-    # 和预训练的不同之处
     train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.1) # cifar100
     # train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150], gamma=0.1) # cifar10
     iter_per_epoch = len(CIFAR_training_loader)
@@ -161,7 +160,6 @@ if __name__ == '__main__':
             os.makedirs(result_path)
     
     '''
-    # # to load a pretrained model
     # Path = "checkpoint/WSresnet18/512/1.6/Pretrain-stage/Tuesday_28_February_2023_18h_15m_06s/WSresnet18-199-regular.pth"  # change to your ckpt
     Path = "checkpoint/WSresnet18/4GPU/downsample_34_18/128/0.4/Pretrain-stage/Monday_13_March_2023_15h_02m_40s/WSresnet18-100-regular.pth"  # change to your ckpt
     map_location = {'cuda:%d' % 0: 'cuda:%d' % args.local_rank}
@@ -193,7 +191,6 @@ if __name__ == '__main__':
 
         train_scheduler.step()
         acc, _ , eval_loss= eval_training(epoch, args, result_path)
-        # 计算平均准确率
         accuracy_tensor = torch.tensor(acc.clone()).cuda()
         torch.distributed.all_reduce(accuracy_tensor, op=torch.distributed.ReduceOp.SUM)
         accuracy_mean = accuracy_tensor.item() / torch.distributed.get_world_size()
