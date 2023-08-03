@@ -155,6 +155,7 @@ if __name__ == '__main__':
     teacher_net.load_state_dict(teacher_checkpoint)
 
     # ipdb.set_trace()
+    # Load teacher model
     teacher_net = nn.SyncBatchNorm.convert_sync_batchnorm(teacher_net)
     teacher_net = torch.nn.parallel.DistributedDataParallel(teacher_net, device_ids=[args.local_rank])
 
@@ -166,24 +167,6 @@ if __name__ == '__main__':
         print("Let's use", torch.cuda.device_count(), "GPUs!")
 
     # data preprocessing:
-
-    # ImageNet_training_loader = get_training_dataloader(
-    #     traindir="/data/imagenet/train",
-    #     num_workers=4,
-    #     batch_size=args.b//num_gpus,
-    #     shuffle=False,
-    #     sampler=1
-    #     # to enable sampler for DDP
-    # )
-
-    # ImageNet_test_loader = get_test_dataloader(
-    #     valdir="/data/imagenet/val",
-    #     num_workers=4,
-    #     batch_size=args.b//num_gpus,
-    #     shuffle=False,
-    #     sampler=1
-    # )
-
     CIFAR_training_loader = get_training_dataloader_CIFAR(sampler=1, batch_size=args.b//num_gpus, num_workers=4, shuffle=False, dataset=args.dataset)
 
     CIFAR_test_loader = get_test_dataloader_CIFAR(sampler=1, batch_size=args.b//num_gpus, num_workers=4, shuffle=False, dataset=args.dataset)
@@ -193,7 +176,6 @@ if __name__ == '__main__':
     loss_function = nn.CrossEntropyLoss(reduction='mean')
     # optimizer = optim.SGD([{'params': net.parameters(), 'initial_lr': b_lr}], momentum=0.9, lr=b_lr, weight_decay=0.0001) # cifar100
     optimizer = optim.SGD([{'params': net.parameters(), 'initial_lr': b_lr}], momentum=0.9, lr=b_lr, weight_decay=0.0001) # cifar10
-    # 和预训练的不同之处
     train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.1) # cifar100
     # train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150], gamma=0.1) # cifar10
     iter_per_epoch = len(CIFAR_training_loader)
